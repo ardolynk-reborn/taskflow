@@ -1,19 +1,39 @@
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:26.2.5
+    build: ./infra/keycloak
     ports:
       - "8080:8080"
     environment:
       KC_HOSTNAME: localhost
       KC_HOSTNAME_STRICT_BACKCHANNEL: true
       KC_HEALTH_ENABLED: true
-      KC_LOG_LEVEL: info
 
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-    command: [start-dev]
+    command: ["start-dev"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
       interval: 15s
       timeout: 2s
       retries: 15
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16.9
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=taskflow
+      - POSTGRES_USER=taskflow
+      - POSTGRES_PASSWORD=taskflow
+
+volumes:
+  postgres_data:
