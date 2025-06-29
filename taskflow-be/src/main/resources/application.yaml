@@ -1,0 +1,13 @@
+spring:
+    application:
+        name: taskflow
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://localhost:5432/taskflow
+        username: taskflow
+        password: taskflow
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: http://localhost:7080/realms/taskflow
