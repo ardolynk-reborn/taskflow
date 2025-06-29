@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### Local stuff ###
-test.http
+sandbox/

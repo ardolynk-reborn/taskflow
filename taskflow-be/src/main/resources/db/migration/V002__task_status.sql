@@ -1,0 +1,3 @@
+ALTER TABLE tasks DROP COLUMN completed;
+ALTER TABLE tasks ADD COLUMN status VARCHAR(255);
+ALTER TABLE tasks ADD COLUMN assignee_id BIGINT REFERENCES users(id)
