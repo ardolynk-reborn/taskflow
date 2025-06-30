@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api/task")
+@RequestMapping("/api/tasks")
 @RequiredArgsConstructor
 public class TaskController {
 
