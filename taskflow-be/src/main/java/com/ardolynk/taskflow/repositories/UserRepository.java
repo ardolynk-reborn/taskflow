@@ -7,4 +7,5 @@ import com.ardolynk.taskflow.dao.UserEntity;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
+    UserEntity findByKeycloakId(String keycloakId);
 }

@@ -7,7 +7,7 @@ import com.ardolynk.taskflow.dao.ProjectEntity_;
 import com.ardolynk.taskflow.dao.UserEntity_;
 
 public class ProjectSpecifications {
-    public static Specification<ProjectEntity> byUserKeycloakUuid(String uuid) {
+    public static Specification<ProjectEntity> byKeycloakId(String uuid) {
         if (uuid == null) {
             return null;
         }
