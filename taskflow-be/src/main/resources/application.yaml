@@ -3,7 +3,7 @@ spring:
         name: taskflow
     datasource:
         driver-class-name: org.postgresql.Driver
-        url: jdbc:postgresql://localhost:5432/taskflow
+        url: jdbc:postgresql://taskflow-db:5432/taskflow
         username: taskflow
         password: taskflow
     security:
@@ -11,3 +11,4 @@ spring:
             resourceserver:
                 jwt:
                     issuer-uri: http://localhost:7080/realms/taskflow
+                    jwk-set-uri: http://keycloak:8080/realms/taskflow/protocol/openid-connect/certs
