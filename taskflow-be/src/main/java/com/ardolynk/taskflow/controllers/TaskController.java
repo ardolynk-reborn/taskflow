@@ -19,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +37,7 @@ public class TaskController {
     }
     
     @GetMapping("/{taskId}")
-    public ResponseEntity<TaskDTO> getTask(@AuthenticationPrincipal Jwt jwt, @RequestParam long taskId) throws NotFoundException {
+    public ResponseEntity<TaskDTO> getTask(@AuthenticationPrincipal Jwt jwt, @PathVariable long taskId) throws NotFoundException {
         return ResponseEntity.ok().body(taskService.getTask(taskId));
     }
     
@@ -46,12 +47,12 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}")
-    public ResponseEntity<TaskDTO> updateTask(@AuthenticationPrincipal Jwt jwt, @RequestParam long taskId, @RequestBody TaskRequest entity) throws MissingEntityException {
+    public ResponseEntity<TaskDTO> updateTask(@AuthenticationPrincipal Jwt jwt, @PathVariable long taskId, @RequestBody TaskRequest entity) throws MissingEntityException {
         return ResponseEntity.ok().body(taskService.updateTask(taskId, entity));
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTask(@AuthenticationPrincipal Jwt jwt, @RequestParam long taskId) throws NotFoundException {
+    public ResponseEntity<Void> deleteTask(@AuthenticationPrincipal Jwt jwt, @PathVariable long taskId) throws NotFoundException {
         taskService.deleteTask(taskId);
         return ResponseEntity.noContent().build();
     }

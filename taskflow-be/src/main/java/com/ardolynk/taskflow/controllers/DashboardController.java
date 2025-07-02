@@ -8,6 +8,7 @@ import com.ardolynk.taskflow.model.ProjectDTO;
 import com.ardolynk.taskflow.model.ProjectRequest;
 import com.ardolynk.taskflow.services.DashboardService;
 
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +38,7 @@ public class DashboardController {
     }
     
     @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectDTO> getProject(@AuthenticationPrincipal Jwt jwt, @RequestParam long projectId) throws NotFoundException {
+    public ResponseEntity<ProjectDTO> getProject(@AuthenticationPrincipal Jwt jwt, @PathVariable long projectId) throws NotFoundException {
         return ResponseEntity.ok().body(dashboardService.getProject(projectId));
     }
 
@@ -46,12 +48,12 @@ public class DashboardController {
     }
     
     @PutMapping("/{projectId}")
-    public ResponseEntity<ProjectDTO> updateProject(@AuthenticationPrincipal Jwt jwt, @RequestParam long projectId, @RequestBody ProjectRequest entity) throws NotFoundException {
+    public ResponseEntity<ProjectDTO> updateProject(@AuthenticationPrincipal Jwt jwt, @PathVariable long projectId, @RequestBody ProjectRequest entity) throws NotFoundException {
         return ResponseEntity.ok().body(dashboardService.updateProject(projectId, entity));
     }
 
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<Void> deleteProject(@AuthenticationPrincipal Jwt jwt, @RequestParam long projectId) throws NotFoundException {
+    public ResponseEntity<Void> deleteProject(@AuthenticationPrincipal Jwt jwt, @PathVariable long projectId) throws NotFoundException {
         dashboardService.deleteProject(projectId);
         return ResponseEntity.noContent().build();
     }
