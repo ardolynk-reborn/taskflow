@@ -8,7 +8,7 @@ import lombok.Data;
 public class TaskDTO {
     private long id;
     private long projectId;
-    private String title;
+    private String name;
     private String description;
     private String status;
     private Long assigneeId;

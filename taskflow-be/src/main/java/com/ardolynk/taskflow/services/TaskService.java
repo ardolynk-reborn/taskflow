@@ -41,7 +41,7 @@ public class TaskService {
             new MissingEntityException("Project", String.valueOf(projectId)));
         TaskEntity.TaskEntityBuilder taskBuilder = TaskEntity.builder()
             .project(project)
-            .title(request.getTitle())
+            .name(request.getName())
             .description(request.getDescription())
             .status(request.getStatus() != null ? request.getStatus() : TaskStatus.TODO);
         Long assigneeId = request.getAssigneeId();
@@ -56,9 +56,9 @@ public class TaskService {
 
     public TaskDTO updateTask(long id, TaskRequest request) throws MissingEntityException {
         TaskEntity task = taskRepository.findById(id).orElseThrow(() -> new MissingEntityException("Task", String.valueOf(id)));
-        String title = request.getTitle();
-        if (title != null) {
-            task.setTitle(title);
+        String name = request.getName();
+        if (name != null) {
+            task.setName(name);
         }
         String description = request.getDescription();
         if (description != null) {

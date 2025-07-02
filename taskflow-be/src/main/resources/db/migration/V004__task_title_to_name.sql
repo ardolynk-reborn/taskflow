@@ -1,0 +1,2 @@
+ALTER TABLE tasks
+RENAME COLUMN title TO name;

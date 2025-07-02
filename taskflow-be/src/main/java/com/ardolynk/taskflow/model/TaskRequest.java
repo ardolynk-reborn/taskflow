@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class TaskRequest {
-    String title;
+    String name;
     String description;
     TaskStatus status;
     Long assigneeId;
