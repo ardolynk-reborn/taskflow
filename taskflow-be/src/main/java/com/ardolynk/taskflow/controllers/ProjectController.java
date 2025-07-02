@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ardolynk.taskflow.exceptions.MissingEntityException;
 import com.ardolynk.taskflow.model.ProjectDTO;
 import com.ardolynk.taskflow.model.ProjectRequest;
-import com.ardolynk.taskflow.services.DashboardService;
+import com.ardolynk.taskflow.services.ProjectService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
 public class ProjectController {
-    private final DashboardService dashboardService;
+    private final ProjectService dashboardService;
 
     @GetMapping
     public ResponseEntity<List<ProjectDTO>> getDashboard(@AuthenticationPrincipal Jwt jwt) {

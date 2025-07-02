@@ -21,13 +21,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class DashboardService {
+public class ProjectService {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final ProjectMapper mapper;
 
     //Logger logger = LoggerFactory.getLogger(DashboardService.class);
-    Logger logger = LoggerFactory.getLogger(DashboardService.class);
+    Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
     public List<ProjectDTO> getProjects(String keycloakId) {
         var result = projectRepository.findAll(ProjectSpecifications.byKeycloakId(keycloakId));
