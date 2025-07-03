@@ -1,0 +1,9 @@
+<h3>{{project ? 'Edit' : 'New'}} Project</h3>
+<form (ngSubmit)="submit()">
+    <label>Name</label>
+    <input [(ngModel)]="model.name" name="name" required/>
+    <label>Description</label>
+    <textarea [(ngModel)]="model.description" name="description"></textarea>
+    <button type="submit">Save</button>
+    <button type="button" (click)="close.emit()">Cancel</button>
+</form>

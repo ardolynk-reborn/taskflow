@@ -1,0 +1,8 @@
+<h5>Tasks</h5>
+<button (click)="openCreateForm()">New Task</button>
+@for (task of project.tasks; track task.id) {
+    <app-task-item [project]="project" [task]="task" (refresh)="refresh.emit()"></app-task-item>
+}
+@if (creating) {
+    <app-task-form [project]="project" (save)="onCreated($event)" (close)="closeForm()"></app-task-form>
+}

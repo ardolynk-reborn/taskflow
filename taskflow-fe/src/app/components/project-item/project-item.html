@@ -1,0 +1,13 @@
+<div>
+    <h4>{{ project.name }}</h4>
+    <p>{{ project.description }}</p>
+    <button (click)="edit()">Edit</button>
+    <button (click)="delete()">Delete</button>
+    @if(editing) {
+        <app-project-form [project]="project" (save)="onUpdate()" (close)="editing = false">
+        </app-project-form>
+    }
+
+    <app-task-list [project]="project" (refresh)="refresh.emit()"></app-task-list>
+    <hr />
+</div>
