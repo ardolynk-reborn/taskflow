@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class UserInitializationFilter extends OncePerRequestFilter {
 
     private final UserRepository repository;
-
+ 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
@@ -32,11 +32,11 @@ public class UserInitializationFilter extends OncePerRequestFilter {
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             String keycloakId = jwtAuth.getToken().getSubject();
             if (repository.findByKeycloakId(keycloakId) == null) {
-                String username = jwtAuth.getTokenAttributes().get("preferred_username").toString();
+                String fullname = jwtAuth.getTokenAttributes().get("name").toString();
                 String email = jwtAuth.getTokenAttributes().get("email").toString();
                 repository.save(com.ardolynk.taskflow.dao.UserEntity.builder()
                     .keycloakId(keycloakId)
-                    .username(username)
+                    .username(fullname)
                     .email(email)
                     .build());
             }
