@@ -1,6 +1,7 @@
 package com.ardolynk.taskflow.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ardolynk.taskflow.exceptions.MissingEntityException;
@@ -10,9 +11,11 @@ import com.ardolynk.taskflow.services.ProjectService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -31,8 +34,19 @@ public class ProjectController {
     private final ProjectService dashboardService;
 
     @GetMapping
-    public ResponseEntity<List<ProjectDTO>> getDashboard(@AuthenticationPrincipal Jwt jwt) {
-        return ResponseEntity.ok().body(dashboardService.getProjects(jwt.getSubject()));
+    public ResponseEntity<List<ProjectDTO>> getDashboard(
+        @AuthenticationPrincipal Jwt jwt,
+        @RequestParam(required = false) Boolean mineOnly,
+        @RequestParam(required = false) String searchString,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant since,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant before
+    ) {
+        return ResponseEntity.ok().body(dashboardService.getProjects(
+            (mineOnly != null && mineOnly) ? jwt.getSubject() : null,
+            searchString,
+            since,
+            before
+        ));
     }
     
     @GetMapping("/{projectId}")

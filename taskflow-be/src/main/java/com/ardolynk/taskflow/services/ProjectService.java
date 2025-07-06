@@ -1,10 +1,13 @@
 package com.ardolynk.taskflow.services;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.ardolynk.taskflow.dao.ProjectEntity;
@@ -29,9 +32,30 @@ public class ProjectService {
     //Logger logger = LoggerFactory.getLogger(DashboardService.class);
     Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
-    public List<ProjectDTO> getProjects(String keycloakId) {
-        var result = projectRepository.findAll(ProjectSpecifications.byKeycloakId(keycloakId));
-        logger.info("Found {} projects", result.size());
+    public List<ProjectDTO> getProjects(
+        String keycloakId,
+        String searchSubstring,
+        Instant since,
+        Instant before
+    ) {
+        // Start with an empty specification
+        List<Specification<ProjectEntity>> specs = new ArrayList<>();
+        if (keycloakId != null) {
+            specs.add(ProjectSpecifications.byKeycloakId(keycloakId));
+        }
+        if (searchSubstring != null) {
+            specs.add(Specification.anyOf(
+                ProjectSpecifications.byNameSubstring(searchSubstring),
+                ProjectSpecifications.byDescriptionSubstring(searchSubstring)
+            ));
+        }
+        if (since != null) {
+            specs.add(ProjectSpecifications.updatedSince(since));
+        }
+        if (before != null) {
+            specs.add(ProjectSpecifications.updatedBefore(before));
+        }
+        var result = projectRepository.findAll(Specification.allOf(specs));
         return result
             .stream()
             .map(mapper::toDto)
@@ -74,6 +98,8 @@ public class ProjectService {
     }
 
     public void deleteProject(long id) throws NotFoundException {
+        // TODO: check permissions (user should be owner or admin)
+        
         ProjectEntity project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException());
         projectRepository.delete(project);
     }

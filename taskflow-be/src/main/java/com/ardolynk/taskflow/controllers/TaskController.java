@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ardolynk.taskflow.dao.TaskStatus;
 import com.ardolynk.taskflow.exceptions.MissingEntityException;
 import com.ardolynk.taskflow.model.TaskDTO;
 import com.ardolynk.taskflow.model.TaskRequest;
@@ -11,9 +12,11 @@ import com.ardolynk.taskflow.services.TaskService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -32,8 +35,23 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> getAssignedTasks(@AuthenticationPrincipal Jwt jwt) {
-        return ResponseEntity.ok().body(taskService.getAssignedTasks(jwt.getSubject()));
+    public ResponseEntity<List<TaskDTO>> getAssignedTasks(
+        @AuthenticationPrincipal Jwt jwt,
+        @RequestParam(required = false) Boolean mineOnly,
+        @RequestParam(required = false) Long projectId,
+        @RequestParam(required = false) TaskStatus[] statuses,
+        @RequestParam(required = false) String searchString,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant since,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant before
+    ) {
+        return ResponseEntity.ok().body(taskService.getTasks(
+            (mineOnly != null && mineOnly) ? jwt.getSubject() : null,
+            projectId,
+            statuses,
+            searchString,
+            since,
+            before
+        ));
     }
     
     @GetMapping("/{taskId}")

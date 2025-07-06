@@ -1,8 +1,11 @@
 package com.ardolynk.taskflow.services;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.ardolynk.taskflow.dao.ProjectEntity;
@@ -16,7 +19,7 @@ import com.ardolynk.taskflow.model.TaskRequest;
 import com.ardolynk.taskflow.repositories.ProjectRepository;
 import com.ardolynk.taskflow.repositories.TaskRepository;
 import com.ardolynk.taskflow.repositories.UserRepository;
-import com.ardolynk.taskflow.specifications.TaskSpecification;
+import com.ardolynk.taskflow.specifications.TaskSpecifications;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,8 +31,39 @@ public class TaskService {
     private final UserRepository userRepository;
     private final TaskMapper mapper;
 
-    public List<TaskDTO> getAssignedTasks(String keycloakId) {
-        return taskRepository.findAll(TaskSpecification.assignedBykeycloakId(keycloakId)).stream().map(mapper::toDto).toList();
+    public List<TaskDTO> getTasks(
+        String keycloakId,
+        Long projectId,
+        TaskStatus[] statuses,
+        String searchSubstring,
+        Instant since,
+        Instant before
+    ) {
+        List<Specification<TaskEntity>> specs = new ArrayList<>();
+        if (keycloakId != null) {
+            specs.add(TaskSpecifications.assignedBykeycloakId(keycloakId));
+        }
+        if (projectId != null) {
+            specs.add(TaskSpecifications.byProjectId(projectId));
+        }
+        if (statuses != null) {
+            specs.add(TaskSpecifications.byStatuses(statuses));
+        }
+        if (searchSubstring != null) {
+            specs.add(
+                Specification.anyOf(
+                    TaskSpecifications.byNameSubstring(searchSubstring),
+                    TaskSpecifications.byDescriptionSubstring(searchSubstring)
+                )
+            );
+        }
+        if (since != null) {
+            specs.add(TaskSpecifications.updatedSince(since));
+        }
+        if (before != null) {
+            specs.add(TaskSpecifications.updatedBefore(before));
+        }
+        return taskRepository.findAll().stream().map(mapper::toDto).toList();
     }
 
     public TaskDTO getTask(long id) {
