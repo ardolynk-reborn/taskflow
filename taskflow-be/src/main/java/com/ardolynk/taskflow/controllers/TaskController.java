@@ -13,9 +13,9 @@ import com.ardolynk.taskflow.services.TaskService;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
-import java.util.List;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,14 +35,18 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> getAssignedTasks(
+    public ResponseEntity<Page<TaskDTO>> getAssignedTasks(
         @AuthenticationPrincipal Jwt jwt,
         @RequestParam(required = false) Boolean mineOnly,
         @RequestParam(required = false) Long projectId,
         @RequestParam(required = false) TaskStatus[] statuses,
         @RequestParam(required = false) String searchString,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant since,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant before
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant before,
+
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "createdAt:desc") String[] sort
     ) {
         return ResponseEntity.ok().body(taskService.getTasks(
             (mineOnly != null && mineOnly) ? jwt.getSubject() : null,
@@ -50,7 +54,11 @@ public class TaskController {
             statuses,
             searchString,
             since,
-            before
+            before,
+
+            page,
+            size,
+            sort
         ));
     }
     

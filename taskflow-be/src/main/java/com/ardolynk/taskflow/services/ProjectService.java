@@ -7,6 +7,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +35,15 @@ public class ProjectService {
     //Logger logger = LoggerFactory.getLogger(DashboardService.class);
     Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
-    public List<ProjectDTO> getProjects(
+    public Page<ProjectDTO> getProjects(
         String keycloakId,
         String searchSubstring,
         Instant since,
-        Instant before
+        Instant before,
+
+        int page,
+        int size,
+        String[] sort
     ) {
         // Start with an empty specification
         List<Specification<ProjectEntity>> specs = new ArrayList<>();
@@ -55,11 +62,26 @@ public class ProjectService {
         if (before != null) {
             specs.add(ProjectSpecifications.updatedBefore(before));
         }
-        var result = projectRepository.findAll(Specification.allOf(specs));
-        return result
-            .stream()
-            .map(mapper::toDto)
-            .toList();
+
+        List<Sort.Order> orders = new ArrayList<>();
+        for (String sortOrder : sort) {
+            String[] _sort = sortOrder.split(":");
+            orders.add(new Sort.Order((_sort. length > 1 && _sort[1].equalsIgnoreCase("desc"))
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC,
+                _sort[0]));
+        }
+
+        var result = projectRepository.findAll(
+            Specification.allOf(specs),
+            PageRequest.of(page, size, Sort.by(orders))
+        );
+
+        logger.info("Result: {}", result);
+        var mappedResult = result.map(mapper::toDto);
+        logger.info("Mapped result: {}", mappedResult);
+
+        return mappedResult;
     }
 
     public ProjectDTO getProject(long id) throws NotFoundException {
@@ -99,7 +121,7 @@ public class ProjectService {
 
     public void deleteProject(long id) throws NotFoundException {
         // TODO: check permissions (user should be owner or admin)
-        
+
         ProjectEntity project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException());
         projectRepository.delete(project);
     }

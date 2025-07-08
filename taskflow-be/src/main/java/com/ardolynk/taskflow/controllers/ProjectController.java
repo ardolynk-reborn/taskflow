@@ -12,9 +12,11 @@ import com.ardolynk.taskflow.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
-import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,20 +34,30 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequiredArgsConstructor
 public class ProjectController {
     private final ProjectService dashboardService;
+    private Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
     @GetMapping
-    public ResponseEntity<List<ProjectDTO>> getDashboard(
+    public ResponseEntity<Page<ProjectDTO>> getDashboard(
         @AuthenticationPrincipal Jwt jwt,
         @RequestParam(required = false) Boolean mineOnly,
         @RequestParam(required = false) String searchString,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant since,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant before
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant before,
+
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "createdAt:desc") String[] sort
     ) {
+        logger.info("Getting projects");
         return ResponseEntity.ok().body(dashboardService.getProjects(
             (mineOnly != null && mineOnly) ? jwt.getSubject() : null,
             searchString,
             since,
-            before
+            before,
+
+            page,
+            size,
+            sort
         ));
     }
     

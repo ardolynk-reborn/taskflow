@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +34,17 @@ public class TaskService {
     private final UserRepository userRepository;
     private final TaskMapper mapper;
 
-    public List<TaskDTO> getTasks(
+    public Page<TaskDTO> getTasks(
         String keycloakId,
         Long projectId,
         TaskStatus[] statuses,
         String searchSubstring,
         Instant since,
-        Instant before
+        Instant before,
+
+        int page,
+        int size,
+        String[] sort
     ) {
         List<Specification<TaskEntity>> specs = new ArrayList<>();
         if (keycloakId != null) {
@@ -63,7 +70,22 @@ public class TaskService {
         if (before != null) {
             specs.add(TaskSpecifications.updatedBefore(before));
         }
-        return taskRepository.findAll().stream().map(mapper::toDto).toList();
+        
+        List<Sort.Order> orders = new ArrayList<>();
+        for (String sortOrder : sort) {
+            String[] _sort = sortOrder.split(":");
+            orders.add(new Sort.Order((_sort. length > 1 && _sort[1].equalsIgnoreCase("desc"))
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC,
+                _sort[0]));
+        }
+
+        var result = taskRepository.findAll(
+            Specification.allOf(specs),
+            PageRequest.of(page, size, Sort.by(orders))
+        );
+        
+        return result.map(mapper::toDto);
     }
 
     public TaskDTO getTask(long id) {
