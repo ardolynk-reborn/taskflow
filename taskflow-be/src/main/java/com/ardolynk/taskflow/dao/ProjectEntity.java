@@ -5,6 +5,7 @@ import java.time.Instant;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -52,6 +53,6 @@ public class ProjectEntity {
     @UpdateTimestamp
     private Instant updatedAt;
     
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = { CascadeType.ALL }, orphanRemoval = true)
     private java.util.List<TaskEntity> tasks;
 }
