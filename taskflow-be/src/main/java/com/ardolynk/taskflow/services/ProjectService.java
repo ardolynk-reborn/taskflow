@@ -66,7 +66,7 @@ public class ProjectService {
         List<Sort.Order> orders = new ArrayList<>();
         for (String sortOrder : sort) {
             String[] _sort = sortOrder.split(":");
-            orders.add(new Sort.Order((_sort. length > 1 && _sort[1].equalsIgnoreCase("desc"))
+            orders.add(new Sort.Order((_sort.length > 1 && _sort[1].equalsIgnoreCase("desc"))
                     ? Sort.Direction.DESC
                     : Sort.Direction.ASC,
                 _sort[0]));

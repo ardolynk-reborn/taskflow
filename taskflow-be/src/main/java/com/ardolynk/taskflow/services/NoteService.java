@@ -82,4 +82,11 @@ public class NoteService {
         note = noteRepository.save(note);
         return mapper.toDto(note);
     }
+
+    public void deleteNote(long id) throws NotFoundException {
+        // TODO: check permissions (user should be owner or admin)
+
+        NoteEntity note = noteRepository.findById(id).orElseThrow(() -> new NotFoundException());
+        noteRepository.delete(note);
+    }
 }
