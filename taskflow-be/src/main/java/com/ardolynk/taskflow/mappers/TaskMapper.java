@@ -10,7 +10,7 @@ import com.ardolynk.taskflow.model.TaskDTO;
 public interface TaskMapper {
 
     @Mapping(target = "projectId", source = "project.id")
-    @Mapping(target = "assigneeId", source = "assignee.id")
+    @Mapping(target = "assigneeUuid", source = "assignee.keycloakId")
     @Mapping(target = "assigneeUsername", source = "assignee.username")
     TaskDTO toDto(TaskEntity task);
 }

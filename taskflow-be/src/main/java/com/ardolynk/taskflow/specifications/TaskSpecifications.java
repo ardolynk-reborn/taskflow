@@ -23,7 +23,7 @@ public class TaskSpecifications {
     }
 
     public static Specification<TaskEntity> byStatuses(TaskStatus[] statuses) {
-        return (root, query, cb) -> cb.in(root.get(TaskEntity_.STATUS)).value(statuses);
+        return (root, query, cb) -> root.get(TaskEntity_.STATUS).in(statuses);
     }
 
     public static Specification<TaskEntity> byNameSubstring(String str) {

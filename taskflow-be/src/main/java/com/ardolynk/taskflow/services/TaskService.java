@@ -99,7 +99,8 @@ public class TaskService {
             .project(project)
             .name(request.getName())
             .description(request.getDescription())
-            .status(request.getStatus() != null ? request.getStatus() : TaskStatus.TODO);
+            .status(request.getStatus() != null ? request.getStatus() : TaskStatus.TODO)
+            .statusUpdatedAt(Instant.now());
         Long assigneeId = request.getAssigneeId();
         if (assigneeId != null) {
             UserEntity assignee = userRepository.findById(assigneeId).orElseThrow(() -> new MissingEntityException("User", String.valueOf(assigneeId)));
@@ -121,7 +122,8 @@ public class TaskService {
             task.setDescription(description);
         }
         TaskStatus status = request.getStatus();
-        if (status != null) {
+        if (status != null && status != task.getStatus()) {
+            task.setStatusUpdatedAt(Instant.now());
             task.setStatus(status);
         }
         Long assigneeId = request.getAssigneeId();

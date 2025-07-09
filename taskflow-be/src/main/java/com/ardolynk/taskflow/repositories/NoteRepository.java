@@ -5,15 +5,15 @@ import java.util.List;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
-import com.ardolynk.taskflow.dao.TaskEntity;
+import com.ardolynk.taskflow.dao.NoteEntity;
 
-import io.micrometer.common.lang.NonNull;
 
 @Repository
-public interface TaskRepository extends JpaRepository<TaskEntity, Long>, JpaSpecificationExecutor<TaskEntity> {
-    @EntityGraph(attributePaths = "project.owner,assignee")
+public interface NoteRepository extends JpaRepository<NoteEntity, Long>, JpaSpecificationExecutor<NoteEntity> {
+    @EntityGraph(attributePaths = "user")
     @NonNull
-    List<TaskEntity> findAll();
+    List<NoteEntity> findAll();
 }

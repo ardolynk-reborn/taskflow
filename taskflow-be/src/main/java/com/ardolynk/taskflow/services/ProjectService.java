@@ -77,11 +77,7 @@ public class ProjectService {
             PageRequest.of(page, size, Sort.by(orders))
         );
 
-        logger.info("Result: {}", result);
-        var mappedResult = result.map(mapper::toDto);
-        logger.info("Mapped result: {}", mappedResult);
-
-        return mappedResult;
+        return result.map(mapper::toDto);
     }
 
     public ProjectDTO getProject(long id) throws NotFoundException {
