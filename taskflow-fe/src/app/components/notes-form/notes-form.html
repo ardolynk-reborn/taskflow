@@ -26,29 +26,76 @@
     Submit
   </button>
 
-  <div *ngIf="isLoading" class="loading">Loading notes…</div>
-
-  <div *ngIf="!isLoading && notes.length === 0" class="empty">
+  @if (isLoading) {
+    <div class="loading">Loading notes…</div>
+  } @else if (notes.length === 0)  {
+  <div class="empty">
     No notes yet.
   </div>
+  }
 
   <div class="notes-list">
     <mat-list *ngIf="notes.length > 0">
-      <div *ngFor="let note of notes" class="note-item">
-        <div class="note-text">
-          {{ note.note }}
+      @for (note of notes; track note.id) {
+        @if (editNoteId == note.id) {
+          @if (isUpdating) {
+            <div class="loading">Updating note…</div>
+          } @else {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Edit note</mat-label>
+              <textarea
+                matInput
+                rows="3"
+                [formControl]="editNoteControl"
+                (keyup.enter)="submitNote()"
+              ></textarea>
+            </mat-form-field>
+            <div class="edit-controls">
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="updateNote()"
+              >
+                Submit
+              </button>
+
+              <button
+                mat-flat-button
+                matButton="outlined"
+                (click)="cancelEdit()"
+              >
+                Cancel
+              </button>
+            </div>
+          }
+        }
+        <div class="note-item">
+          <div class="note-body">
+            <div class="note-text">
+              {{ note.note }}
+            </div>
+            <div class="note-meta">
+              by {{ note.username }}
+            </div>
+          </div>
+          @if (keycloak.subject == note.userUuid) {
+            <div class="note-controls">
+              <button
+                mat-icon-button
+                (click)="editNote(note)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="deleteNote(note.id)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
         </div>
-        <div class="note-meta">
-          by {{ note.username }}
-        </div>
-        <button
-          mat-icon-button
-          color="warn"
-          (click)="deleteNote(note.id)"
-        >
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
+      }
     </mat-list>
   </div>
 

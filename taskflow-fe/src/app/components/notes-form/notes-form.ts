@@ -4,13 +4,14 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { ActivatedRoute } from '@angular/router';
 import { NoteService } from '../../services/note-service';
 import { NoteDTO, TaskDTO } from '../../model/dashboard.model';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+
+import Keycloak from 'keycloak-js';
 
 @Component({
   selector: 'app-notes',
@@ -34,23 +35,24 @@ export class NotesForm implements OnInit {
   notes: NoteDTO[] = [];
   newNoteControl = new FormControl('');
 
+  editNoteId = 0;
+  editNoteControl = new FormControl('');
+
   isLoading = false;
+  isUpdating = false;
 
   pageIndex = 0;
   pageSize = 10;
   totalElements = 0;
 
   constructor(
+    public keycloak: Keycloak,
     public dialogRef: MatDialogRef<any>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private noteService: NoteService
   ) {
     this.task = data.task;
   }
-
-  // goBack() {
-  //   this.location.back();
-  // }
 
   ngOnInit(): void {
     this.loadNotes();
@@ -89,6 +91,33 @@ export class NotesForm implements OnInit {
         this.isLoading = false;
       }
     })
+  }
+
+  updateNote() {
+    this.isUpdating = true;
+    const text = this.editNoteControl.value?.trim();
+    if (!text) return;
+
+    this.noteService.update(this.editNoteId, text).subscribe({
+      next: () => {
+        this.editNoteId = 0;
+        this.isUpdating = false;
+        this.loadNotes(0);
+      },
+      error: () => {
+        this.editNoteId = 0;
+        this.isUpdating = false;
+      }
+    })
+  }
+
+  cancelEdit() {
+    this.editNoteId = 0;
+  }
+
+  editNote(note: NoteDTO) {
+    this.editNoteId = note.id;
+    this.editNoteControl.setValue(note.note);
   }
 
   deleteNote(id: number): void {

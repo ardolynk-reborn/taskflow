@@ -1,12 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import Keycloak from 'keycloak-js';
-import { Projects } from './pages/projects/projects';
-import { Tasks } from './pages/tasks/tasks';
-import { MatToolbar, MatToolbarModule } from '@angular/material/toolbar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
+
+import Keycloak from 'keycloak-js';
 
 @Component({
   selector: 'app-root',
@@ -21,14 +20,11 @@ import { MatIcon } from '@angular/material/icon';
 
     MatTabsModule,
     MatToolbarModule,
-
-    Projects,
-    Tasks
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
 
   username?: string;
 
@@ -38,7 +34,15 @@ export class App {
     this.username = keycloak.tokenParsed?.['name'];
   };
 
-  
+  ngOnInit(): void {
+    setInterval(() => {
+      this.keycloak.updateToken(60)
+        .catch(() => {
+          console.error("Token refresh failed");
+          this.keycloak.logout();
+        });
+    }, 30000);
+  }
 
   isActive(path: string): boolean {
     return this.router.isActive(path, { paths: 'exact', matrixParams: 'ignored', queryParams: 'ignored', fragment: 'ignored' });

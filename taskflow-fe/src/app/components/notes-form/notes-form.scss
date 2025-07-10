@@ -44,11 +44,12 @@ mat-dialog-content.notes-container {
   margin-bottom: 8px;
   border-radius: 4px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   position: relative;
 }
 
 .note-text {
+  flex-grow: 1;
   white-space: pre-wrap;
   line-height: 1.4;
 }
@@ -60,7 +61,27 @@ mat-dialog-content.notes-container {
 }
 
 .note-item button {
-  position: absolute;
+  // position: absolute;
   top: 8px;
   right: 8px;
+}
+
+// .note-item {
+//   display: flex;
+//   flex-direction: row;
+//   top: 8px;
+//   right: 8px;
+// }
+
+
+.note-body {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+.note-controls {
+  display: flex;
+  flex-grow: 0;
+  flex-direction: row;
 }
