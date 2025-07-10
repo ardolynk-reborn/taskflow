@@ -45,14 +45,32 @@ export class TaskForm implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+      console.log("Task: " + JSON.stringify(this.data.task))
+      const ownedByMe = (!this.data.task || this.data.task.ownerUuid == this.keycloak.subject)
+
       this.form = this.fb.group({
         name: [
-          this.data.task?.name || '',
+          {
+            value: this.data.task?.name || '',
+            disabled: !ownedByMe
+          },
           [Validators.required, Validators.minLength(3), Validators.maxLength(255)]
         ],
-        description: [this.data.task?.description || '', Validators.maxLength(255)],
+        description: [
+          {
+            value: this.data.task?.description || '',
+            disabled: !ownedByMe
+          },
+          Validators.maxLength(255)
+        ],
         status: [this.data.task?.status || 'TODO', Validators.required],
-        assigneeId: [this.data.task?.assigneeId || this.data.project?.ownerId || null]
+        assigneeId: [
+          {
+            value: this.data.task?.assigneeId || this.data.project?.ownerId || null,
+            disabled: !ownedByMe
+          }
+        ]
       })
 
       console.log('Data: ' + JSON.stringify(this.data));
@@ -61,10 +79,6 @@ export class TaskForm implements OnInit {
       this.userStore.users$.subscribe(users => {
         this.users = users;
       })
-  }
-
-  ownedByOther() {
-    return this.data.task?.ownerUuid != this.keycloak.subject;
   }
 
   save() {

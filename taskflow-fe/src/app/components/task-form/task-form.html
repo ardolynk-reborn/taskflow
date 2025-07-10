@@ -3,7 +3,7 @@
     <form [formGroup]="form">
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Name</mat-label>
-            <input matInput formControlName="name" required [disabled]="ownedByOther()" />
+            <input matInput formControlName="name" required />
             @if (form.controls['name'].hasError('required')) {
                 <mat-error>
                 Name is required
@@ -23,7 +23,7 @@
 
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" [disabled]="ownedByOther()"></textarea>
+            <textarea matInput formControlName="description"></textarea>
                 @if (form.controls['description'].hasError('maxlength')) {
                 <mat-error>
                 Name must be at most 255 characters
@@ -44,7 +44,7 @@
 
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Assignee</mat-label>
-            <mat-select formControlName="assigneeId" [disabled]="ownedByOther()">
+            <mat-select formControlName="assigneeId">
             @for (user of users; track user.id) {
                 <mat-option [value]="user.id">
                 {{ user.username }} ({{ user.email }})

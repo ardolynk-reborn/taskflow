@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "taskflow-fe-new": {
+    "taskflow-fe": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -36,18 +36,18 @@
           },
           "configurations": {
             "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
-                }
-              ],
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "2mb",
+                    "maximumError": "3mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "200kb",
+                    "maximumError": "300kb"
+                  }
+                ],
               "outputHashing": "all"
             },
             "development": {
@@ -62,10 +62,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "taskflow-fe-new:build:production"
+              "buildTarget": "taskflow-fe:build:production"
             },
             "development": {
-              "buildTarget": "taskflow-fe-new:build:development"
+              "buildTarget": "taskflow-fe:build:development"
             }
           },
           "defaultConfiguration": "development"

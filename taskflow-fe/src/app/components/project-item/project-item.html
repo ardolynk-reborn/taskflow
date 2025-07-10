@@ -1,29 +1,29 @@
 <mat-card class="project-card wide-card">
     <mat-card-title>{{ project.name }} - {{ project.ownerUsername }}</mat-card-title>
     <mat-card-subtitle>{{ project.description }}</mat-card-subtitle>
-        <mat-card-content class="project-card-content">
-            @if (project.tasks.length > 0) {
-                <mat-list class="task-list-scroll">
-                    @for (task of project.tasks; track task.id) {
-                        <app-task-item [task]="task" [showStatus]="true" (save)="onUpdate()"></app-task-item>
-                    }
-                </mat-list>
-            }
-            @else {
-                <mat-card class="empty-card">
-                    <mat-card-content>
-                        <mat-label>No tasks</mat-label>
-                    </mat-card-content>
-                </mat-card>
-            }
-        </mat-card-content>
-    <mat-card-footer class="project-card-footer">
-        @if (keycloak.authenticated && project.ownerUuid == keycloak.subject) {
+    <mat-card-content class="project-card-content">
+        @if (project.tasks.length > 0) {
+            <mat-list class="task-list-scroll">
+                @for (task of project.tasks; track task.id) {
+                    <app-task-item [task]="task" [showStatus]="true" (save)="onUpdate()"></app-task-item>
+                }
+            </mat-list>
+        }
+        @else {
+            <mat-card class="empty-card">
+                <mat-card-content>
+                    <mat-label>No tasks</mat-label>
+                </mat-card-content>
+            </mat-card>
+        }
+    </mat-card-content>
+    @if (keycloak.authenticated && project.ownerUuid == keycloak.subject) {
+        <mat-card-footer class="project-card-footer">
             <div class ="project-actions">
                 <button mat-flat-button color="primary" (click)="openEditProject(project)">Edit</button>
-                <button mat-flat-button color="danger" (click)="deleteProject(project)">Delete</button>
+            <button mat-flat-button color="danger" (click)="deleteProject(project)">Delete</button>
             </div>
             <button mat-flat-button matButton="outlined" (click)="openTaskDialog(project)">Add Task</button>
-        }
-    </mat-card-footer>
+        </mat-card-footer>
+    }
 </mat-card>

@@ -13,17 +13,7 @@ RUN npm run build --prod
 # ================================
 FROM nginx:1.25-alpine
 
-# Remove default nginx website
 RUN rm -rf /usr/share/nginx/html/*
-
-# Copy built Angular app from previous stage
-COPY --from=build /app/dist/<YOUR_PROJECT_NAME> /usr/share/nginx/html
-
-# Optionally copy custom nginx config
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port
-EXPOSE 8080
-
-# Start NGINX
+COPY --from=build /app/dist/taskflow-fe/browser /usr/share/nginx/html
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
