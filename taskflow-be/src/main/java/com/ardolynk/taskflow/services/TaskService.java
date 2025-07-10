@@ -16,6 +16,7 @@ import com.ardolynk.taskflow.dao.TaskEntity;
 import com.ardolynk.taskflow.dao.TaskStatus;
 import com.ardolynk.taskflow.dao.UserEntity;
 import com.ardolynk.taskflow.exceptions.MissingEntityException;
+import com.ardolynk.taskflow.exceptions.UserMismatchException;
 import com.ardolynk.taskflow.mappers.TaskMapper;
 import com.ardolynk.taskflow.model.TaskDTO;
 import com.ardolynk.taskflow.model.TaskRequest;
@@ -111,23 +112,35 @@ public class TaskService {
         return mapper.toDto(savedTask);
     }
 
-    public TaskDTO updateTask(long id, TaskRequest request) throws MissingEntityException {
+    public TaskDTO updateTask(String keycloakId, long id, TaskRequest request) throws MissingEntityException, UserMismatchException {
         TaskEntity task = taskRepository.findById(id).orElseThrow(() -> new MissingEntityException("Task", String.valueOf(id)));
         String name = request.getName();
-        if (name != null) {
+        if (name != null && !name.equals(task.getName())) {
+            if (!task.getProject().getOwner().getKeycloakId().equals(keycloakId)) {
+                throw new UserMismatchException("You don't have permission to update this task");
+            }
             task.setName(name);
         }
         String description = request.getDescription();
-        if (description != null) {
+        if (description != null && !description.equals(task.getDescription())) {
+            if (!task.getProject().getOwner().getKeycloakId().equals(keycloakId)) {
+                throw new UserMismatchException("You don't have permission to update this task");
+            }
             task.setDescription(description);
         }
         TaskStatus status = request.getStatus();
         if (status != null && status != task.getStatus()) {
+            if (!task.getProject().getOwner().getKeycloakId().equals(keycloakId) && !task.getAssignee().getKeycloakId().equals(keycloakId)) {
+                throw new UserMismatchException("You don't have permission to update this task");
+            }
             task.setStatusUpdatedAt(Instant.now());
             task.setStatus(status);
         }
         Long assigneeId = request.getAssigneeId();
-        if (assigneeId != null) {
+        if (assigneeId != null && assigneeId != task.getAssignee().getId()) {
+            if (!task.getProject().getOwner().getKeycloakId().equals(keycloakId)) {
+                throw new UserMismatchException("You don't have permission to update this task");
+            }
             UserEntity assignee = userRepository.findById(assigneeId).orElseThrow(() -> new MissingEntityException("User", String.valueOf(assigneeId)));
             task.setAssignee(assignee);
         }
@@ -135,8 +148,11 @@ public class TaskService {
         return mapper.toDto(savedTask);
     }
 
-    public void deleteTask(long id) throws NotFoundException {
+    public void deleteTask(String keycloakId, long id) throws NotFoundException {
         TaskEntity task = taskRepository.findById(id).orElseThrow(() -> new NotFoundException());
+        if (!task.getProject().getOwner().getKeycloakId().equals(keycloakId)) {
+            throw new UserMismatchException("You don't have permission to delete this task");
+        }
         taskRepository.delete(task);
     }
 }

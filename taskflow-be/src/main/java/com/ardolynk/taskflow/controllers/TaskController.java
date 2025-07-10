@@ -74,12 +74,12 @@ public class TaskController {
 
     @PutMapping("/{taskId}")
     public ResponseEntity<TaskDTO> updateTask(@AuthenticationPrincipal Jwt jwt, @PathVariable long taskId, @RequestBody TaskRequest entity) throws MissingEntityException {
-        return ResponseEntity.ok().body(taskService.updateTask(taskId, entity));
+        return ResponseEntity.ok().body(taskService.updateTask(jwt.getSubject(), taskId, entity));
     }
 
     @DeleteMapping("/{taskId}")
     public ResponseEntity<Void> deleteTask(@AuthenticationPrincipal Jwt jwt, @PathVariable long taskId) throws NotFoundException {
-        taskService.deleteTask(taskId);
+        taskService.deleteTask(jwt.getSubject(), taskId);
         return ResponseEntity.noContent().build();
     }
 }

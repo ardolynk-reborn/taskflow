@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.ardolynk.taskflow.dao.ProjectEntity;
 import com.ardolynk.taskflow.dao.UserEntity;
 import com.ardolynk.taskflow.exceptions.MissingEntityException;
+import com.ardolynk.taskflow.exceptions.UserMismatchException;
 import com.ardolynk.taskflow.mappers.ProjectMapper;
 import com.ardolynk.taskflow.model.ProjectDTO;
 import com.ardolynk.taskflow.model.ProjectRequest;
@@ -82,7 +83,6 @@ public class ProjectService {
 
     public ProjectDTO getProject(long id) throws NotFoundException {
         ProjectEntity project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException());
-        // TODO: check permissions (user should be owner or admin)
         return mapper.toDto(project);
     }
 
@@ -99,9 +99,11 @@ public class ProjectService {
         return mapper.toDto(project);
     }
 
-    public ProjectDTO updateProject(long id, ProjectRequest request) throws NotFoundException {
+    public ProjectDTO updateProject(String keycloakId, long id, ProjectRequest request) throws NotFoundException, UserMismatchException {
         ProjectEntity project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException());
-        // TODO: check permissions (user should be owner or admin)
+        if (!project.getOwner().getKeycloakId().equals(keycloakId)) {
+            throw new UserMismatchException("You don't have permission to update this project");
+        }
 
         String name = request.getName();
         if (name != null) {
@@ -115,10 +117,11 @@ public class ProjectService {
         return mapper.toDto(savedProject);
     }
 
-    public void deleteProject(long id) throws NotFoundException {
-        // TODO: check permissions (user should be owner or admin)
-
+    public void deleteProject(String keycloakId, long id) throws NotFoundException, UserMismatchException {
         ProjectEntity project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException());
+        if (!project.getOwner().getKeycloakId().equals(keycloakId)) {
+            throw new UserMismatchException("You don't have permission to delete this project");
+        }
         projectRepository.delete(project);
     }
 }

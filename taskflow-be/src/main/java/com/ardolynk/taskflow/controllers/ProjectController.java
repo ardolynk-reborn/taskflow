@@ -73,12 +73,12 @@ public class ProjectController {
     
     @PutMapping("/{projectId}")
     public ResponseEntity<ProjectDTO> updateProject(@AuthenticationPrincipal Jwt jwt, @PathVariable long projectId, @RequestBody ProjectRequest entity) throws NotFoundException {
-        return ResponseEntity.ok().body(dashboardService.updateProject(projectId, entity));
+        return ResponseEntity.ok().body(dashboardService.updateProject(jwt.getSubject(),projectId, entity));
     }
 
     @DeleteMapping("/{projectId}")
     public ResponseEntity<Void> deleteProject(@AuthenticationPrincipal Jwt jwt, @PathVariable long projectId) throws NotFoundException {
-        dashboardService.deleteProject(projectId);
+        dashboardService.deleteProject(jwt.getSubject(),projectId);
         return ResponseEntity.noContent().build();
     }
 }

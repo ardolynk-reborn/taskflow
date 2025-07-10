@@ -2,6 +2,7 @@ package com.ardolynk.taskflow.services;
 
 import com.ardolynk.taskflow.dao.NoteEntity;
 import com.ardolynk.taskflow.exceptions.MissingEntityException;
+import com.ardolynk.taskflow.exceptions.UserMismatchException;
 import com.ardolynk.taskflow.mappers.NoteMapper;
 import com.ardolynk.taskflow.model.NoteDTO;
 import com.ardolynk.taskflow.repositories.NoteRepository;
@@ -13,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.core.task.TaskRejectedException;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -76,17 +76,21 @@ public class NoteService {
         return mapper.toDto(note);
     }
 
-    public NoteDTO updateNote(long id, String text) throws NotFoundException, TaskRejectedException {
+    public NoteDTO updateNote(String keycloakId, long id, String text) throws NotFoundException, UserMismatchException {
         NoteEntity note = noteRepository.findById(id).orElseThrow(() -> new NotFoundException());
+        if (!note.getUser().getKeycloakId().equals(keycloakId)) {
+            throw new UserMismatchException("You don't have permission to update this note");
+        }
         note.setNote(text);
         note = noteRepository.save(note);
         return mapper.toDto(note);
     }
 
-    public void deleteNote(long id) throws NotFoundException {
-        // TODO: check permissions (user should be owner or admin)
-
+    public void deleteNote(String keycloakId, long id) throws NotFoundException, UserMismatchException {
         NoteEntity note = noteRepository.findById(id).orElseThrow(() -> new NotFoundException());
+        if (!note.getUser().getKeycloakId().equals(keycloakId)) {
+            throw new UserMismatchException("You don't have permission to delete this note");
+        }
         noteRepository.delete(note);
     }
 }

@@ -34,7 +34,7 @@ public class NoteController {
     private final NoteService service;
 
     @GetMapping
-    public ResponseEntity<Page<NoteDTO>> getMethodName(
+    public ResponseEntity<Page<NoteDTO>> getNodes(
         @RequestParam(required = false) Long taskId,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
@@ -45,7 +45,7 @@ public class NoteController {
     }
  
     @PostMapping
-    public ResponseEntity<NoteDTO> postMethodName(
+    public ResponseEntity<NoteDTO> newNode(
         @AuthenticationPrincipal Jwt jwt,
         @RequestParam(required = true) long taskId,
         @RequestBody String text
@@ -55,17 +55,21 @@ public class NoteController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<NoteDTO> putMethodName(
+    public ResponseEntity<NoteDTO> updateNode(
+        @AuthenticationPrincipal Jwt jwt,
         @PathVariable long id,
         @RequestBody String entity
     ) throws TaskRejectedException, NotFoundException {
-        var result = service.updateNote(id, entity);
+        var result = service.updateNote(jwt.getSubject(), id, entity);
         return ResponseEntity.ok().body(result);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMethodName(@PathVariable long id) throws NotFoundException {
-        service.deleteNote(id);
+    public ResponseEntity<Void> deleteNode(
+        @AuthenticationPrincipal Jwt jwt,
+        @PathVariable long id
+    ) throws NotFoundException {
+        service.deleteNote(jwt.getSubject(), id);
         return ResponseEntity.noContent().build();
     }
 }
