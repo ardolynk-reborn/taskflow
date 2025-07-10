@@ -31,8 +31,12 @@ public class NoteEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    // No relation needed yet
+    @Column(name = "task_id", nullable = false)
     private long taskId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task_id", insertable = false, updatable = false)
+    private TaskEntity task;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

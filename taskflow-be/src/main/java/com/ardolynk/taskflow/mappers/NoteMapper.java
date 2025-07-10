@@ -9,6 +9,7 @@ import com.ardolynk.taskflow.model.NoteDTO;
 @Mapper(componentModel = "spring", uses = { UserMapper.class })
 public interface NoteMapper {
 
+    @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "userUuid", source = "user.keycloakId")
     @Mapping(target = "username", source = "user.username")
     NoteDTO toDto(NoteEntity note);

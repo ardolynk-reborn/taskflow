@@ -11,6 +11,9 @@ public class TaskDTO {
     private String name;
     private String description;
     private String status;
+    private Long ownerId;
+    private String ownerUuid;
+    private String ownerUsername;
     private Long assigneeId;
     private String assigneeUuid;
     private String assigneeUsername;

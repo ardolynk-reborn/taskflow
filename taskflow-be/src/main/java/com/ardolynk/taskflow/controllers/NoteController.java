@@ -54,7 +54,7 @@ public class NoteController {
         return ResponseEntity.ok().body(result);
     }
     
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<NoteDTO> putMethodName(
         @PathVariable long id,
         @RequestBody String entity
@@ -63,7 +63,7 @@ public class NoteController {
         return ResponseEntity.ok().body(result);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMethodName(@PathVariable long id) throws NotFoundException {
         service.deleteNote(id);
         return ResponseEntity.noContent().build();
