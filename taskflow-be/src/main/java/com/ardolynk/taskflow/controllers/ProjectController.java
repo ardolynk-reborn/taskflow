@@ -2,6 +2,7 @@ package com.ardolynk.taskflow.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ardolynk.taskflow.exceptions.MissingEntityException;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -37,6 +39,7 @@ public class ProjectController {
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<ProjectDTO>> getDashboard(
         @AuthenticationPrincipal Jwt jwt,
         @RequestParam(required = false) Boolean mineOnly,
@@ -62,21 +65,25 @@ public class ProjectController {
     }
     
     @GetMapping("/{projectId}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ProjectDTO> getProject(@AuthenticationPrincipal Jwt jwt, @PathVariable long projectId) throws NotFoundException {
         return ResponseEntity.ok().body(dashboardService.getProject(projectId));
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ProjectDTO> newProject(@AuthenticationPrincipal Jwt jwt, @RequestBody ProjectRequest entity) throws MissingEntityException {
         return ResponseEntity.ok().body(dashboardService.newProject(jwt.getSubject(), entity));
     }
     
     @PutMapping("/{projectId}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ProjectDTO> updateProject(@AuthenticationPrincipal Jwt jwt, @PathVariable long projectId, @RequestBody ProjectRequest entity) throws NotFoundException {
         return ResponseEntity.ok().body(dashboardService.updateProject(jwt.getSubject(),projectId, entity));
     }
 
     @DeleteMapping("/{projectId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteProject(@AuthenticationPrincipal Jwt jwt, @PathVariable long projectId) throws NotFoundException {
         dashboardService.deleteProject(jwt.getSubject(),projectId);
         return ResponseEntity.noContent().build();

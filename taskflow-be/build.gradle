@@ -32,12 +32,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.flywaydb:flyway-database-postgresql'
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9"
 	compileOnly 'org.projectlombok:lombok'
-	compileOnly('org.hibernate:hibernate-jpamodelgen:6.4.4.Final')
+	compileOnly 'org.hibernate:hibernate-jpamodelgen:6.4.4.Final'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
-	annotationProcessor('org.hibernate:hibernate-jpamodelgen:6.4.4.Final')
+	annotationProcessor 'org.hibernate:hibernate-jpamodelgen:6.4.4.Final'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

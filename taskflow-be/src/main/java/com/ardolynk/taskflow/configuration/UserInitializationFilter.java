@@ -40,7 +40,7 @@ public class UserInitializationFilter extends OncePerRequestFilter {
                     .email(email)
                     .build());
             }
-            filterChain.doFilter(request, response);
         }
+        filterChain.doFilter(request, response);
     }
 }

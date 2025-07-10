@@ -2,6 +2,7 @@ package com.ardolynk.taskflow.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ardolynk.taskflow.dao.TaskStatus;
@@ -17,6 +18,7 @@ import java.time.Instant;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -35,6 +37,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<TaskDTO>> getAssignedTasks(
         @AuthenticationPrincipal Jwt jwt,
         @RequestParam(required = false) Boolean mineOnly,
@@ -63,21 +66,25 @@ public class TaskController {
     }
     
     @GetMapping("/{taskId}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<TaskDTO> getTask(@AuthenticationPrincipal Jwt jwt, @PathVariable long taskId) throws NotFoundException {
         return ResponseEntity.ok().body(taskService.getTask(taskId));
     }
     
     @PostMapping
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<TaskDTO> newTask(@AuthenticationPrincipal Jwt jwt, @RequestParam long projectId, @RequestBody TaskRequest entity) throws MissingEntityException {
         return ResponseEntity.ok().body(taskService.newTask(projectId, entity));
     }
 
     @PutMapping("/{taskId}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<TaskDTO> updateTask(@AuthenticationPrincipal Jwt jwt, @PathVariable long taskId, @RequestBody TaskRequest entity) throws MissingEntityException {
         return ResponseEntity.ok().body(taskService.updateTask(jwt.getSubject(), taskId, entity));
     }
 
     @DeleteMapping("/{taskId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteTask(@AuthenticationPrincipal Jwt jwt, @PathVariable long taskId) throws NotFoundException {
         taskService.deleteTask(jwt.getSubject(), taskId);
         return ResponseEntity.noContent().build();
