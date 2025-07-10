@@ -1,0 +1,45 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+.project-card {
+    height: 100%;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f2f2f2;
+}
+
+.project-card-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.project-card-footer {
+    display: flex;;
+    justify-content: start;
+    margin-top: 16px;
+}
+
+.project-actions {
+    display: flex;
+    flex-grow: 1;
+    justify-content: start;
+    gap: 16px;
+}
+
+.task-list-scroll {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.empty-card {
+  margin-top: 16px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+

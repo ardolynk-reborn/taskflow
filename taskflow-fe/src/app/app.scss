@@ -1,0 +1,37 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+.mat-title {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.back-toolbar {
+  margin-bottom: 16px;
+  gap: 16px;
+
+  a.nav-link {
+    color: #fff;
+    font-weight: 500;
+    text-decoration: none;
+
+    &.active-link {
+      border-bottom: 2px solid #fff;
+      font-weight: 700;
+    }
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .username {
+    color: #fff;
+    font-weight: 500;
+    margin-right: 8px;
+  }
+
+  .logout-btn {
+    color: #fff;
+    background-color: transparent;
+  }
+}

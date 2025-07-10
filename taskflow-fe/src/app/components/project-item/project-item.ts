@@ -1,36 +1,75 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ProjectDTO } from '../../model/dashboard.models';
-import { ProjectService } from '../../services/project.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatLabel } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { TaskItem } from '../task-item/task-item';
+import { ProjectDTO } from '../../model/dashboard.model';
+import { ProjectService } from '../../services/project-service';
+import { MatDialog } from '@angular/material/dialog';
 import { ProjectForm } from '../project-form/project-form';
-import { TaskList } from "../task-list/task-list";
+import { TaskForm } from '../task-form/task-form';
+import { MatButtonModule } from '@angular/material/button';
+
+import Keycloak from 'keycloak-js';
 
 @Component({
   selector: 'app-project-item',
-  imports: [ProjectForm, TaskList],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    MatListModule,
+    MatLabel,
+
+    TaskItem
+  ],
   templateUrl: './project-item.html',
   styleUrl: './project-item.scss'
 })
 export class ProjectItem {
   @Input() project!: ProjectDTO;
-  @Output() refresh = new EventEmitter<void>();
+  @Output() update = new EventEmitter<ProjectDTO>();
+  @Output() delete = new EventEmitter<void>();
 
-  editing = false;
+   constructor(public keycloak: Keycloak, private projectService: ProjectService, private dialog: MatDialog) {}
 
-  constructor(private service: ProjectService) {}
+    openEditProject(project: any) {
+    const dialogRef = this.dialog.open(ProjectForm, {
+      data: { project },
+      width: '400px',
+    });
 
-  edit() {
-    this.editing = true;
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.update.emit(result);
+        //this.getProjects(this.pageIndex, 10, this.mineOnly);
+      }
+    });
   }
 
-  delete() {
-    if (confirm('Are you sure you want to delete this project?')) {
-      this.service.delete(this.project.id).subscribe(() => this.refresh.emit());
+  deleteProject(project: any) {
+    if (confirm("Are you sure you want to delete this project?")) {
+      this.projectService.delete(project.id).subscribe(() => {
+        this.delete.emit();
+        //this.getProjects(this.pageIndex, 10, this.mineOnly);
+      });
     }
   }
 
+  openTaskDialog(project: any) {
+    const dialogRef = this.dialog.open(TaskForm, {
+      data: { project },
+      width: '600px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.update.emit(result);
+        //this.getProjects(this.pageIndex, 10, this.mineOnly);
+      }
+    });
+  }
+
   onUpdate() {
-    console.log("Updating projects")
-    this.editing = false;
-    this.refresh.emit();
+    this.update.emit(this.project);
   }
 }

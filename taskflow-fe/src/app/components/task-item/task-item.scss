@@ -1,0 +1,26 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.task-card {
+  background-color: white;
+  margin-top: 16px;
+  padding: 8px;
+}
+
+.task-card-footer {
+    display: flex;;
+    justify-content: start;
+    margin-top: 12px;
+}
+
+.task-actions {
+    display: flex;
+    flex-grow: 1;
+    justify-content: start;
+    gap: 6px;
+}

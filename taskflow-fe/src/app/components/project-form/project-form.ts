@@ -1,37 +1,51 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ProjectDTO, ProjectRequest } from '../../model/dashboard.models';
-import { ProjectService } from '../../services/project.service';
+import { CommonModule } from '@angular/common';
+import { Component, Inject, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ProjectService } from '../../services/project-service';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-project-form',
-  imports: [FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule
+  ],
   templateUrl: './project-form.html',
   styleUrl: './project-form.scss'
 })
 export class ProjectForm {
-  @Input() project?: ProjectDTO;
-  @Output() save = new EventEmitter<ProjectRequest>();
-  @Output() close = new EventEmitter<void>();
+  model = {
+    name: '',
+    description: ''
+  };
 
-  model: ProjectRequest = {};
-
-  constructor(private service: ProjectService) {}
-
-  ngOnInit() {
-    if (this.project) {
-      this.model = {
-        name: this.project.name,
-        description: this.project.description
-      };
+  constructor(
+    public dialogRef: MatDialogRef<any>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private projectService: ProjectService
+  ) {
+    if (data?.project) {
+      this.model = { ...data.project};
     }
   }
 
-  submit() {
-    if (this.project) {
-      this.service.update(this.project.id, this.model).subscribe((project) => this.save.emit(project));
+  save() {
+    console.log("Saving model " + JSON.stringify( this.model));
+    if (this.data?.project) {
+      this.projectService.update(this.data.project.id, this.model).subscribe(project => {
+        this.dialogRef.close(project);
+      })
     } else {
-      this.service.create(this.model).subscribe( (project) => { console.log("Saving project"), this.save.emit(project) });
+      this.projectService.create(this.model).subscribe(project => {
+        this.dialogRef.close(project);
+      });
     }
   }
 }

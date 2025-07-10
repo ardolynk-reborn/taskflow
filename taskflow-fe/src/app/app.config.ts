@@ -4,21 +4,19 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideKeycloak } from 'keycloak-angular';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authInterceptor } from './interceptors/auth.interceptor';
-import { environment } from '../environments/environment';
 import { apiInterceptor } from './interceptors/api.interceptor';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // TODO: get rid of hardcoded values
     provideKeycloak({
       config: {
-        url: environment.keycloakUrl,
+        url: 'http://localhost:7080',
         realm: 'taskflow',
-        clientId: 'angular',
+        clientId: 'angular'
       },
       initOptions: {
-        onLoad: 'login-required',//'check-sso',
+        onLoad: 'login-required',
         silentCheckSsoRedirectUri: `${window.location.origin}/assets/silent-check-sso.html`
       }
     }),

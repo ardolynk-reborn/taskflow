@@ -1,64 +1,86 @@
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
+import { ProjectDTO, TaskDTO, UserDTO } from '../../model/dashboard.model';
+
+import { TaskService } from '../../services/task-service';
+import { UserStore } from '../../services/user-store';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ProjectDTO, TaskDTO, taskRequest, UserDTO } from '../../model/dashboard.models';
-import { TaskService } from '../../services/task.service';
-import { UserStoreService } from '../../services/user-store.service';
+import { MatButtonModule } from '@angular/material/button';
+
+import Keycloak from 'keycloak-js';
 
 @Component({
   selector: 'app-task-form',
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+
+    MatButtonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule
+  ],
   templateUrl: './task-form.html',
   styleUrl: './task-form.scss'
 })
-export class TaskForm {
-  @Input() project!: ProjectDTO;
-  @Input() task?: TaskDTO;
-  @Output() save = new EventEmitter<TaskDTO>();
-  @Output() close = new EventEmitter<void>();
+export class TaskForm implements OnInit {
 
-  model: taskRequest= { status: 'TODO' };
-
-  statuses = ['TODO', 'IN_PROGRESS', 'DONE'];
+  form!: FormGroup;
   users: UserDTO[] = [];
-  assigneeSearch = '';
+  statuses = ['TODO', 'IN_PROGRESS', 'DONE'];
+  
+  constructor(
+    public keycloak: Keycloak,
+    private fb: FormBuilder,
+    private taskService: TaskService,
+    private userStore: UserStore,
+    public dialogRef: MatDialogRef<TaskForm>,
+    @Inject(MAT_DIALOG_DATA)
+    public data: { project?: ProjectDTO; task?: TaskDTO }
+  ) {}
 
-  constructor(private service: TaskService, private userStore: UserStoreService) {}
+  ngOnInit(): void {
+      this.form = this.fb.group({
+        name: [
+          this.data.task?.name || '',
+          [Validators.required, Validators.minLength(3), Validators.maxLength(255)]
+        ],
+        description: [this.data.task?.description || '', Validators.maxLength(255)],
+        status: [this.data.task?.status || 'TODO', Validators.required],
+        assigneeId: [this.data.task?.assigneeId || this.data.project?.ownerId || null]
+      })
 
-  ngOnInit() {
-    this.userStore.users$.subscribe(users => this.users = users);
+      console.log('Data: ' + JSON.stringify(this.data));
+      console.log('Form: ' + JSON.stringify(this.form.value));
 
-    if (this.task) {
-      this.model = {
-        name: this.task.name,
-        description: this.task.description,
-        status: this.task.status,
-        assigneeId: this.task.assigneeId
-      };
+      this.userStore.users$.subscribe(users => {
+        this.users = users;
+      })
+  }
+
+  ownedByOther() {
+    return this.data.task?.ownerUuid != this.keycloak.subject;
+  }
+
+  save() {
+    if (this.form.invalid) {
+      return;
     }
 
-    this.assigneeSearch = this.task?.assigneeUsername ?? this.project?.ownerUsername ?? '';
-    this.model.assigneeId = this.task?.assigneeId ?? this.project?.ownerId;
-  }
-
-  selectAssignee(user: UserDTO) {
-    this.model.assigneeId = user.id;
-    this.assigneeSearch = user.username;
-  }
-
-  filteredUsers() {
-    const searchString = this.assigneeSearch.toLowerCase();
-    return this.users.filter(user =>
-      user.username.toLowerCase().includes(searchString) ||
-      user.email.toLowerCase().includes(searchString)
-    );
-  }
-
-  submit() {
-    if (this.task) {
-      this.service.update(this.task.id, this.model).subscribe((task) => this.save.emit(task));
+    const payload = this.form.value;
+    if (this.data.task) {
+      this.taskService.update(this.data.task.id, payload).subscribe(task => {
+        this.dialogRef.close(task);
+      });
     } else {
-      this.service.create(this.project.id, this.model).subscribe((task) => this.save.emit(task));
+      this.taskService.create(this.data.project?.id || this.data.task!.projectId, payload).subscribe(task => {
+        this.dialogRef.close(task);
+      });
     }
   }
 }

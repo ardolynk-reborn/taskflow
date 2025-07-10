@@ -1,12 +1,9 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "cli": {
-    "packageManager": "yarn"
-  },
   "newProjectRoot": "projects",
   "projects": {
-    "taskflow-fe": {
+    "taskflow-fe-new": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -33,6 +30,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ]
           },
@@ -64,10 +62,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "taskflow-fe:build:production"
+              "buildTarget": "taskflow-fe-new:build:production"
             },
             "development": {
-              "buildTarget": "taskflow-fe:build:development"
+              "buildTarget": "taskflow-fe-new:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -91,6 +89,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ]
           }

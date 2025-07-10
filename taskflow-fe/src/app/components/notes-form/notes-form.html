@@ -1,0 +1,66 @@
+<!-- <mat-toolbar color="primary" class="back-toolbar">
+  <button mat-icon-button (click)="goBack()">
+    <mat-icon>home</mat-icon>
+  </button>
+  <span class="ml-2">Back</span>
+</mat-toolbar> -->
+
+<mat-dialog-content class="notes-container">
+  <h2 class="title">{{ task.name }}</h2>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Add a note</mat-label>
+    <textarea
+      matInput
+      rows="3"
+      [formControl]="newNoteControl"
+      (keyup.enter)="submitNote()"
+    ></textarea>
+  </mat-form-field>
+
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="submitNote()"
+  >
+    Submit
+  </button>
+
+  <div *ngIf="isLoading" class="loading">Loading notes…</div>
+
+  <div *ngIf="!isLoading && notes.length === 0" class="empty">
+    No notes yet.
+  </div>
+
+  <div class="notes-list">
+    <mat-list *ngIf="notes.length > 0">
+      <div *ngFor="let note of notes" class="note-item">
+        <div class="note-text">
+          {{ note.note }}
+        </div>
+        <div class="note-meta">
+          by {{ note.username }}
+        </div>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="deleteNote(note.id)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </mat-list>
+  </div>
+
+  <mat-paginator
+    [length]="totalElements"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="[5, 10, 25]"
+    (page)="onPageChange($event)"
+  ></mat-paginator>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="dialogRef.close()">Close</button>
+</mat-dialog-actions>
+

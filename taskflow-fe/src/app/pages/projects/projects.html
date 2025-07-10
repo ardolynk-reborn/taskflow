@@ -1,0 +1,29 @@
+<div class="projects">
+    <div class="projects-header">
+        <button mat-flat-button color="primary" (click)="openAddProject()">Add Project</button>
+        <mat-slide-toggle [(ngModel)]="mineOnly" (change)="getProjects(0, 10, mineOnly)">Show only my projects</mat-slide-toggle>
+    </div>
+
+    @if (isLoading) {
+        <mat-progress-spinner mode="indeterminate" />
+    }
+
+    @if (projects.length > 0) {
+        <div class="project-grid">
+            @for (project of projects; track project.id) {
+                <app-project-item [project]="project" (update)="onUpdate($event)" (delete)="onDelete()"></app-project-item>
+            }
+        </div>
+    }
+    @else {
+        <div class="empty-placeholder">No projects found</div>
+    }
+</div>
+
+<mat-paginator
+  [length]="totalElements"
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex"
+  [pageSizeOptions]="[5, 10, 25]"
+  (page)="loadProjects($event)">
+</mat-paginator>

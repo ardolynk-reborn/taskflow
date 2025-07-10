@@ -1,16 +1,31 @@
-<div>
-    <strong>{{ task.name }}</strong> ({{ task.status }})
-    <p>{{ task.description }}</p>
-    <button (click)="edit()">Edit</button>
-    <button (click)="delete()">Delete</button>
-    @if (task.assigneeUsername) {
-        <p>Assigned to: {{ task.assigneeUsername }}</p>
-    }
-    @if(editing) {
-        <app-task-form
-            [project]="project"
-            [task]="task" (save)="onUpdated()"
-            (close)="editing = false">
-        </app-task-form>
-    }
-</div>
+<mat-card class="task-card">
+    <mat-card-title>{{ task.name }}</mat-card-title>
+    <mat-card-subtitle>{{ task.description }}</mat-card-subtitle>
+    <mat-card-content>
+        <div>
+            <mat-label><strong>Status:</strong> {{ task.status }}</mat-label>
+        </div>
+        <div>
+            <mat-label><strong>Assignee:</strong> {{ task.assigneeUsername }}</mat-label>
+        </div>
+    </mat-card-content>
+    <mat-card-footer class="task-card-footer">
+        @if (keycloak.authenticated) {
+            <div class ="task-actions">
+                @if (task.assigneeUuid == keycloak.subject || keycloak.subject == task.ownerUuid) {
+                    <button mat-icon-button (click)="openEditTask(task)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                }
+                @if (keycloak.subject == task.ownerUuid) {
+                    <button mat-icon-button (click)="deleteTask(task)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                }
+            </div>
+        }
+        <button mat-icon-button (click)="openNotes(task)">
+            <mat-icon>notes</mat-icon>
+        </button>
+    </mat-card-footer>
+</mat-card>

@@ -10,5 +10,5 @@
   },
   "include": [
     "src/**/*.ts"
-, "sandbox/auth.guard.ts"  ]
+  ]
 }

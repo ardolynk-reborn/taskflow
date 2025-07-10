@@ -1,13 +1,24 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { TaskDTO, taskRequest } from "../model/dashboard.models";
+import { Page, TaskDTO, taskRequest } from "../model/dashboard.model";
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
     constructor(private http: HttpClient) {}
 
-    getAll() {
-        return this.http.get<TaskDTO[]>(`/api/tasks`);
+    getTasks(
+            page: number,
+            size: number,
+            mineOnly = false,
+            statuses: string[] = []
+        ) {
+        const params: any = {
+            mineOnly,
+            statuses,
+            page,
+            size,
+        };
+        return this.http.get<Page<TaskDTO>>('/api/tasks', { params });
     }
 
     get(id: number) {

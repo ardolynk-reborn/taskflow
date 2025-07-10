@@ -1,37 +1,59 @@
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, input, Input, Output } from '@angular/core';
-import { ProjectDTO, TaskDTO } from '../../model/dashboard.models';
-import { TaskService } from '../../services/task.service';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatCard, MatCardModule } from '@angular/material/card';
+import { TaskDTO } from '../../model/dashboard.model';
+import { MatLabel } from '@angular/material/input';
+import { TaskService } from '../../services/task-service';
+import { MatDialog } from '@angular/material/dialog';
 import { TaskForm } from '../task-form/task-form';
+import { MatButtonModule } from '@angular/material/button';
+import { NotesForm } from '../notes-form/notes-form';
+import { MatIconModule } from '@angular/material/icon';
+
+import Keycloak from 'keycloak-js';
 
 @Component({
   selector: 'app-task-item',
-  imports: [CommonModule, FormsModule, TaskForm],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatLabel
+  ],
   templateUrl: './task-item.html',
   styleUrl: './task-item.scss'
 })
 export class TaskItem {
-  @Input() project!: ProjectDTO;
   @Input() task!: TaskDTO;
-  @Output() refresh = new EventEmitter<void>();
+  @Input() showStatus = true;
+  @Output() save = new EventEmitter<TaskDTO>()
 
-  editing = false;
+  constructor(public keycloak: Keycloak, private taskService: TaskService, private dialog: MatDialog) { }
 
-  constructor(private service: TaskService) {}
+  openEditTask(task: TaskDTO) {
+    const dialogRef = this.dialog.open(TaskForm, {
+      data: { task },
+      width: '600px'
+    });
 
-  edit() {
-    console.log("Editing task");
-    this.editing = true;
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.save.emit(result);
+      }
+    });
   }
 
-  delete() {
-    this.service.delete(this.task.id).subscribe(() => { console.log("Deleted task"); this.refresh.emit()});
+  deleteTask(task: TaskDTO) {
+    if (confirm("Are you sure you want to delete this task?")) {
+      this.taskService.delete(task.id).subscribe(() => {
+        this.save.emit(task);
+      });
+    }
   }
 
-  onUpdated() {
-    console.log("Finished editing task");
-    this.editing = false;
-    this.refresh.emit();
+  openNotes(task: TaskDTO) {
+    const dialogRef = this.dialog.open(NotesForm, {
+      data: { task },
+      width: '800px'
+    });
   }
 }

@@ -1,0 +1,38 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+.tasks {
+    padding: 16px;
+}
+
+.tasks-header {
+    display: flex;;
+    justify-content: start;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.tasks-section {
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  gap: 16px;
+  background-color: #f2f2f2;
+}
+
+.tasks-content {
+    margin-left: 16px;
+}
+
+.tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.empty-state {
+  width: 100%;
+  padding: 16px;
+  color: gray;
+  text-align: center;
+}

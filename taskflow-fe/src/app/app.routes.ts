@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from './dashboard/dashboard';
-import { authGuard } from '../../sandbox/auth.guard';
-import { Login } from '../../sandbox/login/login';
+import { Projects } from './pages/projects/projects';
+import { Tasks } from './pages/tasks/tasks';
+// import { NotesForm } from './components/notes-form/notes-form';
 
 export const routes: Routes = [
     {
-        path: 'dashboard',
-        component: Dashboard
+        path: 'projects', component: Projects
     },
     {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
+        path: 'tasks', component: Tasks
+    },
+    {
+        path: '', redirectTo: '/projects', pathMatch: 'full'
     }
 ];

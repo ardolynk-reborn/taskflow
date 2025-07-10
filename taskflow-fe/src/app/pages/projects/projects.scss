@@ -1,0 +1,26 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+.projects {
+    padding: 16px;
+}
+
+.projects-header {
+    display: flex;;
+    justify-content: start;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  margin-top: 16px;
+  gap: 16px;
+}
+
+.empty-placeholder {
+  width: 100%;
+  padding: 16px;
+  color: gray;
+  text-align: center;
+}

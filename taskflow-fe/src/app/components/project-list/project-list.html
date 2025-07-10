@@ -1,9 +1,0 @@
-<button (click)="openCreateForm()">New Project</button>
-@for (project of projects; track project.id) {
-    <div>
-        <app-project-item [project]="project" (refresh)="loadProjects()"></app-project-item>
-    </div>
-}
-@if (showForm) {
-    <app-project-form (save)="onProjectSaved($event)" (close)="closeForm()" />
-}

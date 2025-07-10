@@ -1,0 +1,44 @@
+<div class="tasks">
+  <div class="tasks-header">
+    <mat-slide-toggle [(ngModel)]="mineOnly" (change)="toggleMineOnly()">
+      Show only the tasks assigned to me
+    </mat-slide-toggle>
+  </div>
+
+  <div class="tasks-section">
+    @for (status of statuses; track status) {
+      <div class="tasks-column">
+        <div class="tasks-content">
+          <h3>{{ displayableMap[status] }}</h3>
+
+          @if (isLoading[status]) {
+            <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+          }
+
+          @if (tasksMap[status].length > 0) {
+            <div class="tasks-grid">
+              @for (task of tasksMap[status]; track task.id) {
+                <ng-container>
+                  <app-task-item
+                    [task]="task"
+                    (save)="statusChange($event.status, status)">
+                  </app-task-item>
+                </ng-container>
+              }
+            </div>
+          } @else {
+            <div class="empty-state">No tasks</div>
+          }
+        </div>
+
+        <mat-paginator
+          [length]="totalElementsMap[status]"
+          [pageSize]="pageSizeMap[status]"
+          [pageIndex]="pageIndexMap[status]"
+          [pageSizeOptions]="[5, 10, 25]"
+          (page)="pageChange(status, $event)">
+        </mat-paginator>
+      </div>
+    }
+  </div>
+</div>

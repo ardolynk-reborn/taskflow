@@ -8,7 +8,7 @@
   },
   "include": [
     "src/**/*.ts"
-, "sandbox/auth.guard.ts"  ],
+  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]
