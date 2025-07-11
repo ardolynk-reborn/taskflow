@@ -24,7 +24,7 @@
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Description</mat-label>
             <textarea matInput formControlName="description"></textarea>
-                @if (form.controls['description'].hasError('maxlength')) {
+            @if (form.controls['description'].hasError('maxlength')) {
                 <mat-error>
                 Name must be at most 255 characters
                 </mat-error>
