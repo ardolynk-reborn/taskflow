@@ -38,7 +38,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - keycloak-db-data-test:/var/lib/postgresql/data
+      - keycloak-db-data:/var/lib/postgresql/data
       - ./infra/keycloak/initdb:/docker-entrypoint-initdb.d
   
   taskflow-fe:
@@ -64,11 +64,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - taskflow-db-data-test:/var/lib/postgresql/data
+      - taskflow-db-data:/var/lib/postgresql/data
       - ./infra/initdb:/docker-entrypoint-initdb.d
 
 volumes:
-  keycloak-db-data-test:
+  keycloak-db-data:
     driver: local
-  taskflow-db-data-test:
+  taskflow-db-data:
     driver: local
