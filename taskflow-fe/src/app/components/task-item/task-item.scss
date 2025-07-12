@@ -5,15 +5,25 @@
 }
 
 .task-card {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
   background-color: white;
   margin-top: 16px;
   padding: 8px;
 }
 
+.task-card-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+}
+
 .task-card-footer {
     display: flex;;
     justify-content: start;
-    margin-top: 12px;
+    margin-top: 6px;
 }
 
 .task-actions {
