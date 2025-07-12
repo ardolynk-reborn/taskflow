@@ -49,18 +49,9 @@ mat-dialog-content.notes-container {
 }
 
 .note-item button {
-  // position: absolute;
   top: 8px;
   right: 8px;
 }
-
-// .note-item {
-//   display: flex;
-//   flex-direction: row;
-//   top: 8px;
-//   right: 8px;
-// }
-
 
 .note-body {
   display: flex;
@@ -72,4 +63,15 @@ mat-dialog-content.notes-container {
   display: flex;
   flex-grow: 0;
   flex-direction: row;
+}
+
+.edit-controls {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.edit-controls button {
+  flex-grow: 1;
 }

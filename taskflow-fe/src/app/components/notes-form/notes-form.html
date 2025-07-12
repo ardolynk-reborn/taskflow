@@ -68,33 +68,34 @@
               </button>
             </div>
           }
-        }
-        <div class="note-item">
-          <div class="note-body">
-            <div class="note-text">
-              {{ note.note }}
+        } @else {
+          <div class="note-item">
+            <div class="note-body">
+              <div class="note-text">
+                {{ note.note }}
+              </div>
+              <div class="note-meta">
+                by {{ note.username }}
+              </div>
             </div>
-            <div class="note-meta">
-              by {{ note.username }}
-            </div>
+            @if (keycloak.subject == note.userUuid) {
+              <div class="note-controls">
+                <button
+                  mat-icon-button
+                  (click)="editNote(note)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  (click)="deleteNote(note.id)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            }
           </div>
-          @if (keycloak.subject == note.userUuid) {
-            <div class="note-controls">
-              <button
-                mat-icon-button
-                (click)="editNote(note)"
-              >
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button
-                mat-icon-button
-                (click)="deleteNote(note.id)"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          }
-        </div>
+        }
       }
     </mat-list>
   </div>
